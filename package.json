@@ -1,0 +1,240 @@
+{
+  "name": "ios-for-vscode",
+  "displayName": "iOS for VS Code",
+  "description": "Write Swift applications and preview them in real-time on Windows and Linux",
+  "version": "0.0.1",
+  "publisher": "your-publisher-name",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": ["Other", "Debuggers", "Programming Languages"],
+  "keywords": ["swift", "ios", "simulator", "xcode", "swiftui"],
+  "activationEvents": ["onLanguage:swift", "onCommand:ios-vscode.connectServer", "onCommand:ios-vscode.openSimulator"],
+  "main": "./out/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "swift",
+        "aliases": ["Swift", "swift"],
+        "extensions": [".swift"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "swift",
+        "scopeName": "source.swift",
+        "path": "./syntaxes/swift.tmLanguage.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "ios-vscode.connectServer",
+        "title": "Connect to macOS Server",
+        "category": "iOS"
+      },
+      {
+        "command": "ios-vscode.openSimulator",
+        "title": "Open iOS Simulator",
+        "category": "iOS"
+      },
+      {
+        "command": "ios-vscode.selectDevice",
+        "title": "Select Target Device",
+        "category": "iOS"
+      },
+      {
+        "command": "ios-vscode.hotReload",
+        "title": "Toggle Hot Reload",
+        "category": "iOS"
+      },
+      {
+        "command": "ios-vscode.hotReloadForce",
+        "title": "Force Hot Reload",
+        "category": "iOS"
+      },
+      {
+        "command": "ios-vscode.hotReloadHistory",
+        "title": "Show Hot Reload History",
+        "category": "iOS"
+      },
+      {
+        "command": "ios-vscode.hotReloadConfigure",
+        "title": "Configure Hot Reload",
+        "category": "iOS"
+      },
+      {
+        "command": "ios-vscode.startDebugging",
+        "title": "Start Debugging",
+        "category": "iOS Debug"
+      },
+      {
+        "command": "ios-vscode.addWatch",
+        "title": "Add Watch Expression",
+        "category": "iOS Debug"
+      },
+      {
+        "command": "ios-vscode.deployDevice",
+        "title": "Deploy to Device",
+        "category": "iOS Deploy"
+      },
+      {
+        "command": "ios-vscode.deployAppStore",
+        "title": "Deploy to App Store",
+        "category": "iOS Deploy"
+      },
+      {
+        "command": "ios-vscode.manageCertificates",
+        "title": "Manage Certificates",
+        "category": "iOS Deploy"
+      },
+      {
+        "command": "ios-vscode.buildConfiguration",
+        "title": "Build Configuration",
+        "category": "iOS Deploy"
+      }
+    ],
+    "views": {
+      "explorer": [
+        {
+          "id": "ios-simulator",
+          "name": "iOS Simulator",
+          "when": "ios-vscode.connected"
+        },
+        {
+          "id": "ios-devices",
+          "name": "iOS Devices",
+          "when": "ios-vscode.connected"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "panel": [
+        {
+          "id": "ios-console",
+          "title": "iOS Console",
+          "icon": "$(terminal)"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "iOS for VS Code",
+      "properties": {
+        "ios-vscode.serverHost": {
+          "type": "string",
+          "default": "",
+          "description": "macOS server hostname or IP address"
+        },
+        "ios-vscode.serverPort": {
+          "type": "number",
+          "default": 8080,
+          "description": "macOS server port"
+        },
+        "ios-vscode.sshUsername": {
+          "type": "string",
+          "default": "",
+          "description": "SSH username for macOS server"
+        },
+        "ios-vscode.defaultDevice": {
+          "type": "string",
+          "default": "iPhone 15",
+          "description": "Default iOS simulator device"
+        },
+        "ios-vscode.hotReload.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable hot reload for SwiftUI projects"
+        },
+        "ios-vscode.hotReload.debounceDelay": {
+          "type": "number",
+          "default": 1000,
+          "description": "Hot reload debounce delay in milliseconds"
+        },
+        "ios-vscode.hotReload.incrementalCompilation": {
+          "type": "boolean",
+          "default": true,
+          "description": "Use incremental compilation for faster builds"
+        },
+        "ios-vscode.hotReload.swiftUIPreviewMode": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable fast SwiftUI preview updates"
+        },
+        "ios-vscode.hotReload.autoSave": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically save files before hot reload"
+        },
+        "ios-vscode.hotReload.excludePatterns": {
+          "type": "array",
+          "default": ["**/Tests/**", "**/*.test.swift"],
+          "description": "File patterns to exclude from hot reload"
+        }
+      }
+    },
+    "debuggers": [
+      {
+        "type": "swift",
+        "label": "Swift",
+        "program": "./out/debugAdapter.js",
+        "runtime": "node",
+        "configurationAttributes": {
+          "launch": {
+            "required": ["program"],
+            "properties": {
+              "program": {
+                "type": "string",
+                "description": "Absolute path to the program.",
+                "default": "${workspaceFolder}"
+              },
+              "target": {
+                "type": "string",
+                "description": "Target platform (simulator or device)",
+                "default": "simulator",
+                "enum": ["simulator", "device"]
+              },
+              "device": {
+                "type": "string",
+                "description": "Target device name",
+                "default": "iPhone 15 Pro"
+              },
+              "stopOnEntry": {
+                "type": "boolean",
+                "description": "Automatically stop after launch.",
+                "default": false
+              }
+            }
+          },
+          "attach": {
+            "required": ["processId"],
+            "properties": {
+              "processId": {
+                "type": "string",
+                "description": "ID of process to attach to.",
+                "default": "${command:pickProcess}"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.74.0",
+    "@types/node": "24.2.1",
+    "@typescript-eslint/eslint-plugin": "^5.45.0",
+    "@typescript-eslint/parser": "^5.45.0",
+    "eslint": "^8.28.0",
+    "typescript": "^4.9.4"
+  },
+  "dependencies": {
+    "ws": "^8.14.2",
+    "ssh2": "^1.15.0",
+    "node-pty": "^0.10.1"
+  }
+}
